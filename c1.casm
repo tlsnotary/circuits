@@ -1,0 +1,30 @@
+# TLS stage 1
+# Parties input their additive shares of pre-master secret (PMS)
+# Output sha256(PMS XOR ipad) and sha256(PMS XOR opad) for HMAC
+
+# The value of fixed inputs is known in the offline phase
+
+5 2560
+2 512 512
+# notary inputs
+# 256: pms share
+#  fixed
+#  256: output mask
+# client inputs 
+# 256: pms share
+#  fixed
+#  256: output mask
+
+1 512
+# all outputs go to the evaluator
+# 256: outer hash state xor masked by notary
+# 256: inner hash state xor masked by client
+
+512 256 [0|>256] [512|>256] [1024|>256] combine_pms_shares.casm
+
+2 256 0 1 [1280|>256] getSha256InitialState.casm
+
+512 512 [1024|>256] [1280|>256] [1792|>256] [1536|>256] shaPmsXorPadding.casm
+
+512 256 [1536|>256] [256|>256] [2048|>256] xor256bits.casm
+512 256 [1792|>256] [768|>256] [2304|>256] xor256bits.casm

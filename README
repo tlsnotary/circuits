@@ -1,0 +1,21 @@
+This repo contains macros to be assembled into circuits for use in TLSNotary's 2PC.
+The main entrypoints are 6 circuits c1.casm ... c6.casm.
+Each macro contains a description about what it does.
+
+To assemble the macros into Bristol Fashion circuits, run:
+node assemble.js 
+
+
+SOURCES:
+
+casmbundle.js was created from:
+    git clone https://github.com/wyatt-howe/macro-circuit-assembler
+    cd macro-circuit-assembler/
+    git pull origin pull/3/head
+    # (this PR hasn't been merged at the time of writing)
+    # then comment out line 4 in casm.js --> //const fs = require('fs');
+    browserify --ignore fs --standalone CASM casm.js > casmbundle.js
+
+adder64.txt --> https://homes.esat.kuleuven.be/~nsmart/MPC/adder64.txt
+aes-128-reverse.txt --> https://github.com/multiparty/jigg/blob/master/circuits/bristol/aes-128-reverse.txt
+sha256.txt --> https://homes.esat.kuleuven.be/~nsmart/MPC/sha256.txt

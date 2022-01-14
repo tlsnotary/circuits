@@ -2,19 +2,15 @@
 # (AES-GCM first AES-ECB-encrypts a counter block and then xors the result with the plaintext 
 # to get the ciphertext)
 
-# The value of fixed inputs is known in the offline phase
-
 5 885
 2 160 308
 
 # notary inputs
-#  fixed
-#  128: mask to unmask client write key
-#  32 : mask to unmask client write IV
+#  128: client_write_key share
+#  32 : client_write_IV share
 # client inputs
-# 128: client write key masked by notary
-# 32 : client write IV  masked by notary
-#  fixed
+#  128: client_write_key share
+#  32 : client_write_IV share
 #  128: output mask
 #  10: nonce
 #  10: counter (max block counter is 1023)

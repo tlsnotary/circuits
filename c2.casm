@@ -2,18 +2,14 @@
 # Compute master secret MS
 # Output sha256(MS XOR opad) and sha256(MS XOR ipad) for HMAC
 
-# The value of fixed inputs is known in the offline phase
-
 14 3730
 2 512 640
 # notary inputs
-# 256: outer hash state
-#  fixed
+#  256: outer hash state
 #  256: output mask
 # client inputs
-# 256: inner hash state
-# 128: p2 = hmac.new(secret, a2+seed, hashlib.sha256).digest()
-#  fixed
+#  256: inner hash state
+#  128: p2 = hmac.new(secret, a2+seed, hashlib.sha256).digest()
 #  256: output mask
 
 1 512

@@ -3,14 +3,11 @@
 # Compute expanded p2 which consists of client_IV + server_IV
 # Compute verify_data, ghash H, gctr block, encrypted counter block - needed for Client Finished 
 
-# The value of fixed inputs is known in the offline phase
-
 24 4930
 2 832 1568
 
 # notary inputs
-# 256: outer hash state
-#  fixed
+#  256: outer hash state
 #  128: output mask1 (for swk)
 #  128: output mask2 (for cwk)
 #  32:  output mask3 (for siv)
@@ -19,10 +16,9 @@
 #  128: output mask6 (for gctr block)
 
 # client inputs
-# 256: inner hash state for p1_expanded_keys
-# 256: inner hash state for p2_expanded_keys
-# 256: inner hash state for verify_data
-#  fixed
+#  256: inner hash state for p1_expanded_keys
+#  256: inner hash state for p2_expanded_keys
+#  256: inner hash state for verify_data
 #  128: output mask1 (for swk)
 #  128: output mask2 (for cwk)
 #  32:  output mask3 (for siv)

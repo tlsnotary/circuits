@@ -1,25 +1,21 @@
 # TLS stage 4
 # Compute ghash H, gctr block, encrypted counter block, verify_data - needed for Server Finished
 
-# The value of fixed inputs is known in the offline phase
-
 16 3170
 2 672 960
 
 # notary inputs
-# 256: outer hash state for p1
-#  fixed
-#  128: mask to unmask swk
-#  32 : mask to unmask swiv
+#  256: outer hash state for p1
+#  128: swk share
+#  32 : swiv share
 #  128: mask1 for H^1
 #  128: mask2 for gctr block
 
 # client inputs
-# 256: inner hash state for p1
-# 128: swk masked by notary
-# 32:  siv masked by notary
-# 64:  server_finished nonce
-#  fixed
+#  256: inner hash state for p1
+#  128: swk share
+#  32:  siv share
+#  64:  server_finished nonce
 #  128: mask1 for H^1
 #  128: mask2 for gctr block
 #  128: mask3 for enc counter

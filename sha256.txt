@@ -1,4 +1,7 @@
 135073 135841
+# inputs:
+# 512: message to hash
+# 256: state from which to hash
 2 512 256 
 1 256 
 2 1 416 576 125751 AND

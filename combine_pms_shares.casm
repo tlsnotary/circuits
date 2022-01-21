@@ -17,7 +17,7 @@
 # 836|>256 prime's "one's complement"
 # 1092|>256 outputs
 
-2 1 0 0 512 XOR
+2 1 0 0 512 XOR #zero
 
 # add 1st batch of 63-bit summands
 128 64 [0|>63] 512 [256|>63] 512 [514|>63] 513 adder64.txt

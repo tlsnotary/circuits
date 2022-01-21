@@ -1,6 +1,7 @@
 # TLS stage 1
-# Parties input their additive shares of pre-master secret (PMS)
-# Output sha256(PMS XOR ipad) and sha256(PMS XOR opad) for HMAC
+# Parties input their additive shares of the pre-master secret (PMS).
+# Outputs sha256(pms xor opad) called "pms outer hash state" to N and also outputs
+# sha256(pms xor ipad) called "pms inner hash state" to C.
 
 5 2560
 2 512 512
@@ -13,8 +14,8 @@
 
 1 512
 # all outputs go to the evaluator
-# 256: outer hash state xor masked by notary
-# 256: inner hash state xor masked by client
+# 256: pms outer hash state xor masked by notary
+# 256: pms inner hash state by client
 
 512 256 [0|>256] [512|>256] [1024|>256] combine_pms_shares.casm
 

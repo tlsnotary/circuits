@@ -1,10 +1,9 @@
 # TLS stage 3.
 # Compute expanded p1 which consists of client_write_key + server_write_key
 # Compute expanded p2 which consists of client_IV + server_IV
-# Compute verify_data, ghash H, gctr block, encrypted counter block - needed for Client Finished 
 
-24 4930
-2 832 1568
+12 2562
+2 576 832
 
 # notary inputs
 #  256: outer hash state
@@ -12,36 +11,25 @@
 #  128: output mask2 (for cwk)
 #  32:  output mask3 (for siv)
 #  32:  output mask4 (for civ)
-#  128: output mask5 (for H)
-#  128: output mask6 (for gctr block)
 
 # client inputs
 #  256: inner hash state for p1_expanded_keys
 #  256: inner hash state for p2_expanded_keys
-#  256: inner hash state for verify_data
 #  128: output mask1 (for swk)
 #  128: output mask2 (for cwk)
 #  32:  output mask3 (for siv)
 #  32:  output mask4 (for civ)
-#  128: output mask5 (for H)
-#  128: output mask6 (for gctr block)
-#  128: output mask7 (for encrypted counter) 
-#  96 : output mask8 (for verify_data)
 
-1 800
+1 320
 
 # all outputs go to the evaluator
 # 128: server_write_key xor-masked twice (by mask1)
 # 128: client_write_key xor-masked twice (by mask2)
 # 32 : server IV xor-masked twice (by mask3)
 # 32 : client IV xor-masked twice (by mask4)
-# 128: H xor-masked twice (by mask5)
-# 128: gctr block for client_finished xor-masked twice (by mask6)
-# 128: encrypted counter block for cf xor-masked by client's mask7
-# 96 : verify_data xor-masked by client's mask8
 
-2 1 0 0 2400 XOR # 0
-1 1 2400 2401 INV # 1
+2 1 0 0 1408 XOR  # 0
+1 1 1408 1409 INV # 1
 
 # pad outer hash digest as the last chunk of sha256
 # total length of bits in outer sha256: L == 512+256 ==768 should be the last 64 bits
@@ -49,44 +37,23 @@
 # to be hashed: 256 bits inner hash digest + 1 + 191 bits of 0 + 48 bits of 0 + 0000 0011 0000 0000
 
 # the result is p1:
-768 256 [2400*8] 2401 2401 [2400*245] 2401 [832|>256] [0|>256] [2402|>256] sha256.txt
+#       8 zeroes   1   1   245 zeroes  1   C input 1  N input 1
+768 256 [1408*8] 1409 1409 [1408*245] 1409 [576|>256] [0|>256] [1410|>256] sha256.txt
 # the result is p2 (client IV is the top-most 32 bits):
-768 256 [2400*8] 2401 2401 [2400*245] 2401 [1088|>256] [0|>256] [2658|>256] sha256.txt
-# the result is p1 for client_finished (verify_data is the topmost 96 bits):
-768 256 [2400*8] 2401 2401 [2400*245] 2401 [1344|>256] [0|>256] [2914|>256] sha256.txt
-
-# get encrypted zero - gcm H
-256 128 [2530|>128] [2400*128] [3170|>128] aes-128-reverse.txt
-
-# gctr block for client_finished
-# to be encrypted: 4-byte client_write_IV + 8-byte nonce == 1 + 4-byte block counter value == 1
-256 128 [2530|>128] 2401 [2400*31] 2401 [2400*63] [2882|>32] [3298|>128] aes-128-reverse.txt
-
-# encrypted counter block
-# to be encrypted: 4-byte client_write_IV + 8-byte nonce == 1 + 4-byte block counter value == 2
-# note that lsb goes first
-256 128 [2530|>128] 2400 2401 [2400*30] 2401 [2400*63] [2882|>32] [3426|>128] aes-128-reverse.txt
+#       8 zeroes   1   1   245 zeroes  1   C input 2  N input 1                         
+768 256 [1408*8] 1409 1409 [1408*245] 1409 [832|>256] [0|>256] [1666|>256] sha256.txt
 
 
 #prepare all outputs
 
-# xor swk/cwk/siv/civ/H/gctr with notary's masks
-256 128 [2402|>128] [256|>128] [3554|>128] xor128bits.casm
-256 128 [2530|>128] [384|>128] [3682|>128] xor128bits.casm
-64 32 [2850|>32] [512|>32] [3810|>32] xor32bits.casm
-64 32 [2882|>32] [544|>32] [3842|>32] xor32bits.casm
-256 128 [3170|>128] [576|>128] [3874|>128] xor128bits.casm
-256 128 [3298|>128] [704|>128] [4002|>128] xor128bits.casm
+# xor swk/cwk/siv/civ with notary's masks
+256 128 [1410|>128] [256|>128] [1922|>128] xor128bits.casm
+256 128 [1538|>128] [384|>128] [2050|>128] xor128bits.casm
+64 32 [1858|>32] [512|>32] [2178|>32] xor32bits.casm
+64 32 [1890|>32] [544|>32] [2210|>32] xor32bits.casm
 
 # xor the result with client's masks
-256 128 [3554|>128] [1600|>128] [4130|>128] xor128bits.casm
-256 128 [3682|>128] [1728|>128] [4258|>128] xor128bits.casm
-64 32 [3810|>32] [1856|>32] [4386|>32] xor32bits.casm
-64 32 [3842|>32] [1888|>32] [4418|>32] xor32bits.casm
-256 128 [3874|>128] [1920|>128] [4450|>128] xor128bits.casm
-256 128 [4002|>128] [2048|>128] [4578|>128] xor128bits.casm
-
-256 128 [3426|>128] [2176|>128] [4706|>128] xor128bits.casm
-64 32 [3074|>32] [2304|>32] [4834|>32] xor32bits.casm
-64 32 [3106|>32] [2336|>32] [4866|>32] xor32bits.casm
-64 32 [3138|>32] [2368|>32] [4898|>32] xor32bits.casm
+256 128 [1922|>128] [1088|>128] [2242|>128] xor128bits.casm
+256 128 [2050|>128] [1216|>128] [2370|>128] xor128bits.casm
+64 32 [2178|>32] [1344|>32] [2498|>32] xor32bits.casm
+64 32 [2210|>32] [1376|>32] [2530|>32] xor32bits.casm

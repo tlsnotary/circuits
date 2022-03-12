@@ -15,7 +15,7 @@
 1 512
 # all outputs go to the evaluator
 # 256: pms outer hash state xor masked by notary
-# 256: pms inner hash state by client
+# 256: pms inner hash state xor masked by client
 
 512 256 [0|>256] [512|>256] [1024|>256] combine_pms_shares.casm
 

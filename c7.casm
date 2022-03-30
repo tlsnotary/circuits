@@ -1,38 +1,39 @@
-# AES-ECB encrypt one block to produce gctr block
-# exactly the same as circuit 6 except here the counter is fixed at 1
+# AES-GCM-encrypt one block of plaintext and check for any carriage returns
+# the plaintext has.
 
-7 1138
-2 288 304
+6 901
+2 160 308
 
 # notary inputs
 #  128: client_write_key share
 #  32 : client_write_IV share
-#  128: output mask
 # client inputs
 #  128: client_write_key share
 #  32 : client_write_IV share
-#  128: output mask
-#  16 : nonce
+#  128: plaintext block
+#  10 : nonce
+#  10 : counter (max block counter that can fit into 10 bits is 1023)
 
-1 128
-# all outputs go to the evaluator:
-# 128: gctr block masked twice
+1 144
+# all outputs go to the evaluator
+# 128: encrypted plaintext block
+# 16 : for each byte of the plaintext block, a bit will be set to 1 if the byte
+# is a carriage return
 
-2 1 0 0 592 XOR # 0 
-1 1 592 593 INV # 1
+2 1 0 0 468 XOR # 0
 
 # unmask client_write_key 
-256 128 [0|>128] [288|>128] [594|>128] xor128bits.casm
+256 128 [0|>128] [160|>128] [469|>128] xor128bits.casm
 
 # unmask client_write_IV
-64 32 [128|>32] [416|>32] [722|>32] xor32bits.casm
+64 32 [128|>32] [288|>32] [597|>32] xor32bits.casm
 
-# encrypt client_write_IV + nonce (8 bytes) + counter (4 bytes) == 1 
-# (counter is fixed at 1 for gctr blocks)
-256 128 [594|>128] 593 [592*31] [576|>16] [592*48] [722|>32] [754|>128] aes-128-reverse.txt
+# encrypt client_write_IV + nonce (8 bytes) + counter (4 bytes)
+256 128 [469|>128] [458|>10] [468*22] [448|>10] [468*54] [597|>32] [629|>128] aes-128-reverse.txt
 
-# mask by notary
-256 128 [754|>128] [160|>128] [882|>128] xor128bits.casm
+# xor encrypted counter with plaintext to get ciphertext
+256 128 [629|>128] [320|>128] [757|>128] xor128bits.casm
 
-# mask by client
-256 128 [882|>128] [448|>128] [1010|>128] xor128bits.casm
+# check for carriage returns in the plaintext
+128 16 [320|>128] [885|>16] checkCarriageReturn.casm
+

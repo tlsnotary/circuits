@@ -23,6 +23,15 @@ aes-128-reverse.txt --> https://github.com/multiparty/jigg/blob/master/circuits/
 sha256.txt --> https://homes.esat.kuleuven.be/~nsmart/MPC/sha256.txt
 
 
+## License
+All circuits in this repository are licensed under either of
+
+- [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+- [MIT license](http://opensource.org/licenses/MIT)
+
+at your option.
+
+
 The circuits c1, c2, c3, c4, c5 compute TLS's PRF starting from the pre-master 
 secret and computing "master secret", "expanded keys", "verify_data" for 
 Client_Finished, "verify_data" for Server_Finished.

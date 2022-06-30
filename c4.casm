@@ -1,5 +1,9 @@
 # TLS stage 3.
 # Compute ghash H, gctr block, encrypted counter block - needed for Client Finished 
+#
+# Note that circuits 3 and 4 could be combined. The reason why we keep them separate
+# is to later enforce that the same AES key which is used to encrypt Client Finished
+# is also used to encrypt the request to the webserver. 
 
 14 2626
 2 576 704
